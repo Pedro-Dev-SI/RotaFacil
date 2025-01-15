@@ -1,0 +1,9 @@
+-- Adicionando os campos de data na tabela "rota"
+ALTER TABLE public.rota
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL;
+
+-- Adicionando os campos de data na tabela "entrega"
+ALTER TABLE public.entrega
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL;

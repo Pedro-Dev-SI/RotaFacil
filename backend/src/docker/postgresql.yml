@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db-rota-facil:
+    image: postgis/postgis:latest
+    ports:
+      - "5435:5432"
+    container_name: "rotafacil-db"
+    volumes:
+      - ./rota-facil-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: rotafacil
+    restart: always
+
+volumes:
+  rota-facil-db:
