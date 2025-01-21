@@ -7,10 +7,10 @@
           <i class="bi bi-truck"></i>
         </router-link>
 
-        <div class="nav-box">
+        <router-link to="/entregas" class="nav-box">
           <h2>Visualizar Entregas</h2>
           <i class="bi bi-eye"></i>
-        </div>
+        </router-link>
       </div>
     </div>
   </div>
@@ -35,6 +35,7 @@ export default {
   i {
     font-size: 40px;
     margin-left: 10px;
+    color: white;
   }
 
   .center-box {

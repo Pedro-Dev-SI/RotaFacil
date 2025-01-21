@@ -13,4 +13,6 @@ public interface RotaRepository extends JpaRepository<Rota, UUID> {
 
     @Query("SELECT COUNT(r) FROM Rota r WHERE EXTRACT(MONTH FROM r.createdAt) = :mes AND EXTRACT(YEAR FROM r.createdAt) = :ano")
     Long countRotasPorMesEAno(@Param("mes") int mes, @Param("ano") int ano);
+
+    Rota findByCodigo(String codigo);
 }

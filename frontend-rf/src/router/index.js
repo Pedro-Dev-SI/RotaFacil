@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import EntregaForm from '../views/EntregaForm.vue'
+import ResultadoCriacao from '../views/ResultadoCriacao.vue'
+import VisualizarEntregas from '../views/VisualizarEntregas.vue'
 
 const routes = [
   {
@@ -20,6 +22,17 @@ const routes = [
     path: '/cadastrar-entrega',
     name: 'EntregaForm',
     component: EntregaForm
+  },
+  {
+    path: '/rota-criada/:codigoRota',
+    name: 'ResultadoCriacao',
+    component: ResultadoCriacao,
+    props: true,
+  },
+  {
+    path: '/entregas',
+    name: 'VisualizarEntregas',
+    component: VisualizarEntregas
   }
 ]
 

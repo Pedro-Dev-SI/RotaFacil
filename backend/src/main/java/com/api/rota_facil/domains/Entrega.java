@@ -1,8 +1,10 @@
 package com.api.rota_facil.domains;
 
+import com.api.rota_facil.Enums.EstadoEnum;
 import com.api.rota_facil.Enums.StatusEntregaEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -19,16 +21,18 @@ import org.hibernate.annotations.Type;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "entrega", schema = "public")
+
 @Getter
 @Setter
-@NoArgsConstructor
+@Entity
+@Table(name = "entrega", schema = "public")
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Entrega {
 
     @Id
@@ -54,6 +58,16 @@ public class Entrega {
     @Column(name = "bairro", nullable = false)
     private String bairro;
 
+    @Column(name = "cidade", nullable = false)
+    private String cidade;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "uf", nullable = false)
+    private EstadoEnum uf;
+
+    @Column(name = "estado", nullable = false)
+    private String estado;
+
     @Column(name = "pereciveis", nullable = false)
     private Boolean pereciveis;
 
@@ -71,23 +85,27 @@ public class Entrega {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private StatusEntregaEnum status;
-    @Column(name = "coordenadas_entrega", nullable = false, columnDefinition = "geometry(Point, 4326)")
-    private Point coordenadasEntrega;
+//    @Column(name = "coordenadas_entrega", nullable = false, columnDefinition = "geometry(Point, 4326)")
+//    private Point coordenadasEntrega;
 
     @ManyToOne
     @JoinColumn(name = "rota_id", nullable = false)
     private Rota rota;
 
-    public void setLocalizacao(double latitude, double longitude) {
-        this.coordenadasEntrega = new org.locationtech.jts.geom.GeometryFactory()
-                .createPoint(new org.locationtech.jts.geom.Coordinate(longitude, latitude));
+    public Entrega() {
+
     }
 
-    public Double getLatitude() {
-        return this.coordenadasEntrega.getY();
-    }
-
-    public Double getLongitude() {
-        return this.coordenadasEntrega.getX();
-    }
+//    public void setLocalizacao(double latitude, double longitude) {
+//        this.coordenadasEntrega = new org.locationtech.jts.geom.GeometryFactory()
+//                .createPoint(new org.locationtech.jts.geom.Coordinate(longitude, latitude));
+//    }
+//
+//    public Double getLatitude() {
+//        return this.coordenadasEntrega.getY();
+//    }
+//
+//    public Double getLongitude() {
+//        return this.coordenadasEntrega.getX();
+//    }
 }
