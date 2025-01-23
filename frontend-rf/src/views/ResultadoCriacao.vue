@@ -5,10 +5,10 @@
         <p>Rota <span>{{ codigoRota }}</span> cadastrada com sucesso.</p>
         <p>O que deseja fazer ?</p>
 
-        <div class="nav-box">
+        <router-link :to="`/visualizar-rota/${codigoRota}`" class="nav-box">
           <h2>Visualizar rota</h2>
           <i class="bi bi-eye"></i>
-        </div>
+        </router-link>
 
         <router-link to="/" class="nav-box">
           <h2>Menu princial</h2>
