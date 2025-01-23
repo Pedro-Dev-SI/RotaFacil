@@ -71,11 +71,10 @@ export default {
         }
     },
     async mounted(){
-        console.log(this.status);
     },
     methods: {
         visualizar(item) {
-            console.log('Visualizar', item);
+            this.$router.push({ name: 'VisualizarRota', params: { codigoRota: item.codigoRota } });
         },
     }
 }

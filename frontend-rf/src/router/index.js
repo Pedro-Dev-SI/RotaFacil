@@ -3,6 +3,7 @@ import HomePage from '../views/HomePage.vue'
 import EntregaForm from '../views/EntregaForm.vue'
 import ResultadoCriacao from '../views/ResultadoCriacao.vue'
 import VisualizarEntregas from '../views/VisualizarEntregas.vue'
+import VisualizarRota from '../views/VisualizarRota.vue'
 
 const routes = [
   {
@@ -33,7 +34,13 @@ const routes = [
     path: '/entregas',
     name: 'VisualizarEntregas',
     component: VisualizarEntregas
-  }
+  },
+  {
+    path: "/visualizar-rota/:codigoRota",
+    name: "VisualizarRota",
+    component: VisualizarRota,
+    props: true,
+  },
 ]
 
 const router = createRouter({

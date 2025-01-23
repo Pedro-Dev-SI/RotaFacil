@@ -4,6 +4,7 @@ import com.api.rota_facil.Enums.StatusEntregaEnum;
 import com.api.rota_facil.domains.Entrega;
 import com.api.rota_facil.services.DTOs.EntregaDTO;
 import com.api.rota_facil.services.EntregaService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -40,6 +43,11 @@ public class EntregaController {
         return ResponseEntity.ok(entregaService.getAllByStatus(status));
     }
 
+    @GetMapping("/rota/{codigoRota}")
+    public ResponseEntity<List<EntregaDTO>> getAllEntregasByCodigoRota(@PathVariable("codigoRota") String codigoRota) {
+        return ResponseEntity.ok(entregaService.findAllByCodRota(codigoRota));
+    }
+
     @PostMapping("/iniciar/{codigoRota}")
     public ResponseEntity iniciarRota(@PathVariable("codigoRota") String codigoRota) {
         entregaService.iniciarRota(codigoRota);
@@ -56,5 +64,10 @@ public class EntregaController {
     public ResponseEntity cancelarEntregas(@RequestBody List<String> codsEntrega) {
         entregaService.cancelarEntrega(codsEntrega);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/calcular-rota")
+    public ResponseEntity<List<EntregaDTO>> calcularRota(@RequestBody List<String> codsEntregas) {
+        return ResponseEntity.ok(entregaService.calcularRota(codsEntregas));
     }
 }

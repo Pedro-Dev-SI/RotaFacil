@@ -7,10 +7,14 @@ import com.api.rota_facil.domains.Rota;
 import com.api.rota_facil.repositories.EntregaRepository;
 import com.api.rota_facil.repositories.RotaRepository;
 import com.api.rota_facil.services.DTOs.EntregaDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,6 +64,25 @@ public class EntregaService {
 
             entregaToBeAdded.setEstado(entrega.estado());
             entregaToBeAdded.setCidade(entrega.cidade());
+
+            String enderecoFormatado = String.format(
+                    "%s+%s,+%s,+%s,+%s,+brasil",
+                    entrega.numero(),
+                    entrega.logradouro().replace(" ", "+"),
+                    entrega.bairro().replace(" ", "+"),
+                    entrega.cidade().replace(" ", "+"),
+                    entrega.estado().replace(" ", "+")
+            );
+
+            try {
+                Map<String, Double> coordinates = geoService.getCoordinates(enderecoFormatado);
+                double latitude = coordinates.get("latitude");
+                double longitude = coordinates.get("longitude");
+
+                entregaToBeAdded.setLocalizacao(latitude, longitude);
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao buscar coordenadas para o endereço: " + enderecoFormatado, e);
+            }
 
             entregaToBeAdded.setRota(rota);
             entregasToSave.add(entregaToBeAdded);
@@ -111,5 +134,24 @@ public class EntregaService {
 
         entregaRepository.saveAll(entregasToBeCancelled);
 
+    }
+
+    public List<EntregaDTO> calcularRota(List<String> codsEntrega) {
+
+        var entregas = entregaRepository.findAllByCodigoIsIn(codsEntrega);
+
+        if (entregas.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A lista de entregas não pode estar vazia.");
+        }
+
+        // Algoritmo de roteamento simplificado (pode ser substituído por algo mais sofisticado)
+        entregas.sort(Comparator.comparing(Entrega::getLatitude).thenComparing(Entrega::getLongitude));
+
+        return entregas.stream().map(EntregaDTO::fromEntity).collect(Collectors.toList()); // Retorna a lista ordenada
+    }
+
+    public List<EntregaDTO> findAllByCodRota(String codigoRota) {
+        var rota = rotaRepository.findByCodigo(codigoRota);
+        return entregaRepository.findAllByRotaId(rota.getId()).stream().map(EntregaDTO::fromEntity).collect(Collectors.toList());
     }
 }

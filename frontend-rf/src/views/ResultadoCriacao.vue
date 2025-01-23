@@ -30,7 +30,6 @@ export default {
   },
 
   mounted() {
-    console.log('codigoRota:', this.codigoRota);
   }
 }
 </script>

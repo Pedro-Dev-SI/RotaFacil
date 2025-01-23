@@ -330,7 +330,6 @@ export default {
         this.listaEntregasToSave.push(l.form);
       })
 
-      console.log(this.listaEntregasToSave);
 
       try {
         const { data } = await EntregaService.createEntrega(this.listaEntregasToSave);
@@ -353,7 +352,6 @@ export default {
               this.listaEntregas[index].form.uf = responseCep.uf;
               this.listaEntregas[index].form.cidade = responseCep.localidade;
               this.listaEntregas[index].form.estado = responseCep.estado;
-              console.log(responseCep);
           } catch (error) {
               this.$notify({
                   title: 'Atenção',

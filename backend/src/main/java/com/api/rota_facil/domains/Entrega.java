@@ -85,8 +85,8 @@ public class Entrega {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private StatusEntregaEnum status;
-//    @Column(name = "coordenadas_entrega", nullable = false, columnDefinition = "geometry(Point, 4326)")
-//    private Point coordenadasEntrega;
+    @Column(name = "coordenadas_entrega", nullable = false, columnDefinition = "geometry(Point, 4326)")
+    private Point coordenadasEntrega;
 
     @ManyToOne
     @JoinColumn(name = "rota_id", nullable = false)
@@ -96,16 +96,16 @@ public class Entrega {
 
     }
 
-//    public void setLocalizacao(double latitude, double longitude) {
-//        this.coordenadasEntrega = new org.locationtech.jts.geom.GeometryFactory()
-//                .createPoint(new org.locationtech.jts.geom.Coordinate(longitude, latitude));
-//    }
-//
-//    public Double getLatitude() {
-//        return this.coordenadasEntrega.getY();
-//    }
-//
-//    public Double getLongitude() {
-//        return this.coordenadasEntrega.getX();
-//    }
+    public void setLocalizacao(double latitude, double longitude) {
+        this.coordenadasEntrega = new org.locationtech.jts.geom.GeometryFactory()
+                .createPoint(new org.locationtech.jts.geom.Coordinate(longitude, latitude));
+    }
+
+    public Double getLatitude() {
+        return this.coordenadasEntrega.getY();
+    }
+
+    public Double getLongitude() {
+        return this.coordenadasEntrega.getX();
+    }
 }

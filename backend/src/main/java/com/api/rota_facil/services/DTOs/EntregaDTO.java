@@ -20,7 +20,10 @@ public record EntregaDTO(
 
         String codigoRota,
 
-        StatusEntregaEnum status
+        StatusEntregaEnum status,
+
+        Double latitude,
+        Double longitude
 ) {
 
     public static EntregaDTO fromEntity(Entrega entrega) {
@@ -37,7 +40,9 @@ public record EntregaDTO(
                 entrega.getPereciveis(),
                 entrega.getObeservacoes(),
                 entrega.getRota() != null ? entrega.getRota().getCodigo() : null,
-                entrega.getStatus()
+                entrega.getStatus(),
+                entrega.getLatitude(),
+                entrega.getLongitude()
         );
     }
 }
