@@ -45,6 +45,7 @@ public class EntregaController {
 
     @GetMapping("/rota/{codigoRota}")
     public ResponseEntity<List<EntregaDTO>> getAllEntregasByCodigoRota(@PathVariable("codigoRota") String codigoRota) {
+        //Teste commit
         return ResponseEntity.ok(entregaService.findAllByCodRota(codigoRota));
     }
 
