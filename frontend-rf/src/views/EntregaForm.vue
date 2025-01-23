@@ -35,7 +35,7 @@
                   <b-form-input
                     id="input-2"
                     v-model="entrega.form.cep"
-                    type="number"
+                    type="text"
                     placeholder="CEP"
                     required
                     class="custom-input"
@@ -45,14 +45,14 @@
 
                 <b-form-group
                   id="input-group-3"
-                  label="Rua"
+                  label="Logradouro"
                   label-for="input-3"
                   class="custom-label-group"
                   style="width: 100%"
                 >
                   <b-form-input
                     id="input-3"
-                    v-model="entrega.form.rua"
+                    v-model="entrega.form.logradouro"
                     type="text"
                     placeholder="Rua"
                     required
@@ -97,13 +97,49 @@
                 </b-form-group>
               </div>
 
+              <div class="row-inputs">
+                <b-form-group
+                  id="input-group-4"
+                  label="UF"
+                  label-for="input-4"
+                  class="custom-label-group"
+                  style="margin-right: 25px;"
+                >
+                  <b-form-input
+                    id="input-4"
+                    v-model="entrega.form.uf"
+                    type="text"
+                    placeholder="UF"
+                    required
+                    class="custom-input"
+                  ></b-form-input>
+                </b-form-group>
+
+                <b-form-group
+                  id="input-group-5"
+                  label="Cidade"
+                  label-for="input-5"
+                  class="custom-label-group"
+                  style="width: 100%"
+                >
+                  <b-form-input
+                    id="input-5"
+                    v-model="entrega.form.cidade"
+                    type="text"
+                    placeholder="Cidade"
+                    required
+                    class="custom-input"
+                  ></b-form-input>
+                </b-form-group>
+              </div>
+
               <b-form-group id="input-group-6" class="custom-label-group">
                 <b-form-checkbox
                   id="checkbox-1"
                   v-model="entrega.form.pereciveis"
                   name="checkbox-1"
-                  value="accepted"
-                  unchecked-value="not_accepted"
+                  value=true
+                  unchecked-value=false
                 >
                   Possui perecíveis? (Sim)
                 </b-form-checkbox>
@@ -149,22 +185,46 @@
           class="custom-buttons submit-btn"
           type="submit"
           variant="success"
-          @click="calcularRota"
           style="margin-top: 10px;"
+          :disabled='!entregasValidas'
+          data-bs-toggle="modal"
+          data-bs-target="#confirmModal"
         >
           Calcular rota
         </b-button>
     </div>
     <notifications position="top right" />
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">Confirmar</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            Deseja finalizar o cadastro de entregas ?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" @click="calcularRota" data-bs-dismiss="modal">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 
 import CepService from '@/services/cep.service.js';
+import EntregaService from '@/services/entrega.service.js';
+
 
 export default {
   name: "EntregaForm",
+  components: {
+  },
   data() {
     return {
       listaEntregas: [
@@ -172,17 +232,32 @@ export default {
           form: {
             nomeCliente: '',
             cep: '',
-            rua: '',
+            logradouro: '',
             numero: '',
             bairro: '',
+            uf: '',
+            cidade: '',
+            estado: '',
             pereciveis: false,
-            observacoes: '',
+            observacoes: ''
           },
           isCollapsed: false,
           show: true
         }
-      ]
+      ],
+      listaEntregasToSave: [],
+      codigoRotaSalva: '',
     };
+  },
+  computed: {
+    entregasValidas() {
+      for (let entrega of this.listaEntregas) {
+        if (entrega.form.nomeCliente === '' || entrega.form.cep === '' || entrega.form.logradouro === '' || entrega.form.numero === '' || entrega.form.bairro === '' || entrega.form.uf === '' || entrega.form.cidade === '') {
+            return false;
+        }
+      }
+      return true;
+    }
   },
   methods: {
     onSubmit(index, evt) {
@@ -194,7 +269,7 @@ export default {
       this.listaEntregas[index].form = {
         nomeCliente: '',
         cep: '',
-        rua: '',
+        logradouro: '',
         numero: '',
         bairro: '',
         pereciveis: false,
@@ -207,7 +282,7 @@ export default {
 
     validarEntregasCadastradas() {
         for (let entrega of this.listaEntregas) {
-            if (entrega.form.nomeCliente === '' || entrega.form.cep === '' || entrega.form.rua === '' || entrega.form.numero === '' || entrega.form.bairro === '') {
+            if (entrega.form.nomeCliente === '' || entrega.form.cep === '' || entrega.form.logradouro === '' || entrega.form.numero === '' || entrega.form.bairro === '' || entrega.form.uf === '' || entrega.form.cidade === '') {
                 return false;
             }
         }
@@ -216,51 +291,75 @@ export default {
 
     adicionarEntrega() {
         
-        const entregasValidas = this.validarEntregasCadastradas();
+      const entregasValidas = this.validarEntregasCadastradas();
 
-        if (this.listaEntregas.length < 5) {
+      if (this.listaEntregas.length < 5) {
 
-            if (!entregasValidas) {
-                this.$notify({
-                    title: 'Atenção',
-                    text: 'Preencha todos os campos da entrega antes de adicionar uma nova.',
-                    type: 'error'
-                });
-                return;
-            }
-
-            this.listaEntregas.push({
-                form: {
-                nomeCliente: '',
-                cep: '',
-                rua: '',
-                numero: '',
-                bairro: '',
-                pereciveis: false,
-                observacoes: '',
-                },
-                isCollapsed: false,
-                show: true
-            });
+        if (!entregasValidas) {
+          this.$notify({
+            title: 'Atenção',
+            text: 'Preencha todos os campos da entrega antes de adicionar uma nova.',
+            type: 'error'
+          });
+          return;
         }
+
+        this.listaEntregas.push({
+          form: {
+          nomeCliente: '',
+          cep: '',
+          logradouro: '',
+          numero: '',
+          bairro: '',
+          pereciveis: false,
+          uf: '',
+          cidade: '',
+          estado: '',
+          observacoes: ''
+          },
+          isCollapsed: true,
+          show: true
+        });
+
+        this.listaEntregas[this.listaEntregas.length - 2].isCollapsed = false;
+      }
     },
-    calcularRota() {
-      console.log(this.listaEntregas);
+    async calcularRota() {
+
+      this.listaEntregas.forEach(async (l) => {
+        this.listaEntregasToSave.push(l.form);
+      })
+
+
+      try {
+        const { data } = await EntregaService.createEntrega(this.listaEntregasToSave);
+
+        this.codigoRotaSalva = data[0].codigoRota
+
+        this.$router.push({ name: 'ResultadoCriacao', params: { codigoRota: this.codigoRotaSalva } });
+
+      } catch (error) {
+        console.log(error);
+      }
+
     },
     async validaCep(index) {
-        if (this.listaEntregas[index].form.cep.length === 8) {
-            try {
-                var responseCep = await CepService.getCepData(this.listaEntregas[index].form.cep);
-                this.listaEntregas[index].form.rua = responseCep.logradouro;
-                this.listaEntregas[index].form.bairro = responseCep.bairro;
-            } catch (error) {
-                this.$notify({
-                    title: 'Atenção',
-                    text: 'CEP inválido.',
-                    type: 'error'
-                });
-            }
-        }
+      if (this.listaEntregas[index].form.cep.length === 8) {
+          try {
+              var responseCep = await CepService.getCepData(this.listaEntregas[index].form.cep);
+              this.listaEntregas[index].form.logradouro = responseCep.logradouro;
+              this.listaEntregas[index].form.bairro = responseCep.bairro;
+              this.listaEntregas[index].form.uf = responseCep.uf;
+              this.listaEntregas[index].form.cidade = responseCep.localidade;
+              this.listaEntregas[index].form.estado = responseCep.estado;
+          } catch (error) {
+              this.$notify({
+                  title: 'Atenção',
+                  text: 'CEP inválido.',
+                  type: 'error'
+              });
+          }
+      }
     }
   }
 }

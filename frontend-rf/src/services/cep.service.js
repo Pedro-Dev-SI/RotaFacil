@@ -28,7 +28,8 @@ const CepService = {
       console.error('Erro ao buscar o CEP:', error.message);
       throw error; // Propaga o erro para o chamador
     }
-  },
+  }
+
 };
 
 export default CepService;
