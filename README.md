@@ -37,3 +37,46 @@ O RotaFacil é um sistema desenvolvido para otimizar a gestão de rotas de entre
 ### Clonando o Repositório
 ```bash
 git clone https://github.com/Pedro-Dev-SI/RotaFacil.git
+```
+
+## CONFIGURAÇÃO BACKEND
+```bash
+cd RotaFacil/backend
+```
+
+- Configure o arquivo application.properties (ou application.yml) com os dados do seu banco de dados PostgreSQL.
+- Execute as migrações com Flyway (as migrações geralmente são executadas automaticamente na inicialização do Spring Boot).
+
+- Rode a aplicação:
+```bash
+mvn spring-boot:run
+```
+
+
+## CONFIGURAÇÃO FRONTEND
+```bash
+cd RotaFacil/frontend
+```
+
+- Instale as dependências:
+```bash
+npm install
+```
+
+- Rode a aplicação:
+```bash
+npm run serve
+```
+
+
+## Funcionalidades:
+
+- Cálculo de Rotas:
+  - Integração com banco de dados geoespacial para calcular e otimizar rotas de entrega.
+
+- Visualização de Mapas:
+  - Interface intuitiva que permite visualizar as rotas e pontos de entrega em mapas interativos.
+
+- Gestão de Entregas:
+  - Possibilidade de registrar e gerenciar pedidos e entregas com base na localização.
+
